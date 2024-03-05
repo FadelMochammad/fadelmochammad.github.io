@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirect Page</title>
+    <script>
+        // Fungsi untuk mengambil parameter dari URL
+        function getQueryParam(param) {
+            var queryParams = new URLSearchParams(window.location.search);
+            return queryParams.get(param);
+        }
+
+        // Fungsi utama untuk melakukan redirect
+        function redirectToResult() {
+            var id = getQueryParam('id'); // Mengambil ID dari URL
+            var url = "https://script.google.com/macros/s/AKfycbxpmgqmfQbBec9ckcm96Md_bXCddTE9RiNwANeuI97cKbnUm_7kU2QdfEe9VdFf-kxfVQ/exec"; // URL untuk mengambil data
+
+            // Memeriksa apakah browser mendukung fetch
+            if (!window.fetch) {
+                alert("Your browser does not support the fetch API, which is needed for this page to work.");
+                return;
+            }
+
+            // Melakukan request ke server untuk mendapatkan data
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    var item = data.find(item => item.id.toString() === id); // Mencari item berdasarkan ID
+                    if (item && item.result) {
+                        window.location.href = item.result; // Redirect ke URL result
+                    } else {
+                        window.location.href = '/404.html'; // Redirect ke halaman 404 jika ID tidak ditemukan
+                    }
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                    window.location.href = '/404.html';
+                });
+        }
+    </script>
+</head>
+<body onload="redirectToResult()">
+    Tunggu Sebentar
+</body>
+</html>
